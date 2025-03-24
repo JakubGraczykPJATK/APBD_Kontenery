@@ -45,4 +45,8 @@ public class ContainerForLiquid : Container, IHazardNotifier
             }
         }
     }
+    protected override void initId(string append="")
+    {
+        base.initId("L-" + Guid.NewGuid());
+    }
 }

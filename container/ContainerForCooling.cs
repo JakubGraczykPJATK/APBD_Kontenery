@@ -26,6 +26,11 @@ public class ContainerForCooling : Container
         base.LoadCargo(cargo);
     }
 
+    protected override void initId(string append="")
+    {
+        base.initId("C-" + Guid.NewGuid());
+    }
+
     public override void EmptyCargo()
     {
         _cargoType = null;

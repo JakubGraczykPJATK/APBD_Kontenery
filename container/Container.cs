@@ -23,4 +23,14 @@ public abstract class Container
 
         _cargoWeightInKg += cargo.weight;
     }
+
+    public double getTotalWeight()
+    {
+        return _containerWeightInKg + _cargoWeightInKg;
+    }
+
+    protected virtual void initId(String append = "")
+    {
+        _id = "KON-" + append;
+    }
 }

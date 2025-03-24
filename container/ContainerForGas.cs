@@ -21,4 +21,8 @@ public class ContainerForGas : Container, IHazardNotifier
     {
         _cargoWeightInKg *= 0.05;
     }
+    protected override void initId(string append="")
+    {
+        base.initId("G-" + Guid.NewGuid());
+    }
 }
