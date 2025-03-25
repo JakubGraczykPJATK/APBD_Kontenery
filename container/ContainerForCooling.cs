@@ -5,6 +5,11 @@ public class ContainerForCooling : Container
     private string? _cargoType;
     private float _containerTemp;
 
+    public ContainerForCooling(double containerWeightInKg, double maxCargoCapacityInKg, double heightInCm,
+        double depthInCm) : base(containerWeightInKg, maxCargoCapacityInKg, heightInCm, depthInCm)
+    {
+    }
+
     public override void LoadCargo(Cargo cargo)
     {
         if (typeof(CargoProduct) != cargo.GetType())
@@ -26,9 +31,9 @@ public class ContainerForCooling : Container
         base.LoadCargo(cargo);
     }
 
-    protected override void initId(string append="")
+    protected override string initId(string append = "")
     {
-        base.initId("C-" + Guid.NewGuid());
+        return base.initId("C-" + uid++);
     }
 
     public override void EmptyCargo()

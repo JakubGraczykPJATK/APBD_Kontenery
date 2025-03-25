@@ -4,6 +4,11 @@ public class ContainerForLiquid : Container, IHazardNotifier
 {
     private bool _isCargoHazardous;
 
+    public ContainerForLiquid(double containerWeightInKg, double maxCargoCapacityInKg, double heightInCm,
+        double depthInCm) : base(containerWeightInKg, maxCargoCapacityInKg, heightInCm, depthInCm)
+    {
+    }
+
     public void Log(string id, string message)
     {
         Console.WriteLine("Container: " + id + " " + message);
@@ -45,8 +50,9 @@ public class ContainerForLiquid : Container, IHazardNotifier
             }
         }
     }
-    protected override void initId(string append="")
+
+    protected override string initId(string append = "")
     {
-        base.initId("L-" + Guid.NewGuid());
+        return base.initId("L-" + uid++);
     }
 }

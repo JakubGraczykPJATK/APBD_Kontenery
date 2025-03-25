@@ -2,6 +2,11 @@
 
 public class ContainerForGas : Container, IHazardNotifier
 {
+    public ContainerForGas(double containerWeightInKg, double maxCargoCapacityInKg, double heightInCm, double depthInCm)
+        : base(containerWeightInKg, maxCargoCapacityInKg, heightInCm, depthInCm)
+    {
+    }
+
     public void Log(string id, string message)
     {
         Console.WriteLine("Container: " + id + " " + message);
@@ -21,8 +26,9 @@ public class ContainerForGas : Container, IHazardNotifier
     {
         _cargoWeightInKg *= 0.05;
     }
-    protected override void initId(string append="")
+
+    protected override string initId(string append = "")
     {
-        base.initId("G-" + Guid.NewGuid());
+        return base.initId("G-" + uid++);
     }
 }
