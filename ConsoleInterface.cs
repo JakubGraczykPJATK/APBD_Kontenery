@@ -28,7 +28,7 @@ public class ConsoleInterface
         return stringBuilder.ToString();
     }
 
-    public string printMenu(List<CargoShip> ships, List<Container> containers,ref HashSet<int> allowedCommands)
+    public string printMenu(List<CargoShip> ships, List<Container> containers, ref HashSet<int> allowedCommands)
     {
         allowedCommands.Clear();
         var stringBuilder = new StringBuilder();
@@ -59,36 +59,43 @@ public class ConsoleInterface
                 allowedCommands.Add(6);
             }
 
-            if (ships.Any(s => s.getContainers().Count != 0))
+            if (ships.Any(s => s.GetContainers().Count != 0))
             {
                 stringBuilder.AppendLine("7. Unload container from cargo ship");
                 allowedCommands.Add(7);
             }
+        }
 
-            if (containers.Any(c => c.getCargoWeight() != 0d)
-                || ships.Any(s => s.getContainers().Count != 0)
-                && ships.Any(s => s.getContainers().Any(c => c.getCargoWeight() != 0d)))
-            {
-                stringBuilder.AppendLine("8. Unload cargo from container");
-                allowedCommands.Add(8);
-            }
+        if (containers.Count != 0 && containers.Any(c => c.getCargoWeight() != 0d)
+            || ships.Any(s => s.GetContainers().Count != 0)
+            && ships.Any(s => s.GetContainers().Any(c => c.getCargoWeight() != 0d)))
+        {
+            stringBuilder.AppendLine("8. Unload cargo from container");
+            allowedCommands.Add(8);
+        }
 
-            if (ships.Any(s => s.getContainers().Count != 0)
-                && containers.Count != 0)
-            {
-                stringBuilder.AppendLine("9. Swap container on cargo ship with another container");
-                allowedCommands.Add(9);
-            }
+        if (ships.Any(s => s.GetContainers().Count != 0)
+            && containers.Count != 0)
+        {
+            stringBuilder.AppendLine("9. Swap container on cargo ship with another container");
+            allowedCommands.Add(9);
+        }
 
-            if (ships.Count > 2
-                && ships.Any(s => s.getContainers().Count != 0))
-            {
-                stringBuilder.AppendLine("10. Move container from one ship to another");
-                allowedCommands.Add(10);
-            }
+        if (ships.Count >= 2
+            && ships.Any(s => s.GetContainers().Count != 0))
+        {
+            stringBuilder.AppendLine("10. Move container from one ship to another");
+            allowedCommands.Add(10);
+        }
 
+        if (ships.Count != 0)
+        {
             stringBuilder.AppendLine("11. Info about cargo ship");
             allowedCommands.Add(11);
+        }
+
+        if (containers.Count != 0)
+        {
             stringBuilder.AppendLine("12. Info about container");
             allowedCommands.Add(12);
         }

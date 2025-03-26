@@ -1,4 +1,6 @@
-﻿namespace ContainerConsoleApp;
+﻿using System.Text;
+
+namespace ContainerConsoleApp;
 
 public class ContainerForCooling : Container
 {
@@ -6,8 +8,9 @@ public class ContainerForCooling : Container
     private float _containerTemp;
 
     public ContainerForCooling(double containerWeightInKg, double maxCargoCapacityInKg, double heightInCm,
-        double depthInCm) : base(containerWeightInKg, maxCargoCapacityInKg, heightInCm, depthInCm)
+        double depthInCm, float minTemp) : base(containerWeightInKg, maxCargoCapacityInKg, heightInCm, depthInCm)
     {
+        _containerTemp = minTemp;
     }
 
     public override void LoadCargo(Cargo cargo)
@@ -23,11 +26,12 @@ public class ContainerForCooling : Container
             throw new WrongProductTypeException(_id, _cargoType, cargoProduct.name);
         }
 
-        if (cargoProduct.minTemp > _containerTemp)
+        if (cargoProduct.minTemp < _containerTemp)
         {
             throw new WrongMinimalTemperatureException(_id, cargoProduct.minTemp);
         }
 
+        _cargoType = cargoProduct.name;
         base.LoadCargo(cargo);
     }
 
@@ -36,15 +40,19 @@ public class ContainerForCooling : Container
         return base.initId("C-" + uid++);
     }
 
+    public override string ToString()
+    {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.Append(base.ToString().Replace("}", ","));
+        stringBuilder.Append(" product type: " + _cargoType + ",");
+        stringBuilder.Append(" minimal temp: " + _containerTemp + "}");
+
+        return stringBuilder.ToString();
+    }
+
     public override void EmptyCargo()
     {
         _cargoType = null;
         base.EmptyCargo();
     }
-
-    public class WrongProductTypeException(string id, string expected, string received)
-        : Exception("Container: " + id + " Expected product " + expected + ", but received: " + received);
-
-    public class WrongMinimalTemperatureException(string id, float productTemp)
-        : Exception("Container: " + id + " Container temp is higher than minimal temp for the product");
 }

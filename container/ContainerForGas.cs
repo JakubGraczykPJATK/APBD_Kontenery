@@ -1,4 +1,6 @@
-﻿namespace ContainerConsoleApp;
+﻿using System.Text;
+
+namespace ContainerConsoleApp;
 
 public class ContainerForGas : Container, IHazardNotifier
 {
@@ -10,6 +12,8 @@ public class ContainerForGas : Container, IHazardNotifier
     public void Log(string id, string message)
     {
         Console.WriteLine("Container: " + id + " " + message);
+        Console.WriteLine("Enter anything to continue.");
+        Console.ReadKey();
     }
 
     public override void LoadCargo(Cargo cargo)

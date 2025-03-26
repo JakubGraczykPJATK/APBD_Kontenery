@@ -9,22 +9,22 @@ public class CargoShip
         _maxSpeedInKnots = maxSpeedInKnots;
         _maxContainerNumber = maxContainerNumber;
         _maxWeightInTons = maxWeightInTons;
-        _name = "Ship_" + uid++;
+        _name = "SHIP-" + _uid++;
         _containers = new Dictionary<string, Container>();
     }
 
-    private static int uid;
-    private Dictionary<string, Container> _containers;
-    private string _name;
-    private float _maxSpeedInKnots;
-    private int _maxContainerNumber;
-    private double _maxWeightInTons;
+    private static int _uid;
+    private readonly Dictionary<string, Container> _containers;
+    private readonly string _name;
+    private readonly float _maxSpeedInKnots;
+    private readonly int _maxContainerNumber;
+    private readonly double _maxWeightInTons;
 
-    public void loadContainer(Container container)
+    public void LoadContainer(Container container)
     {
         if (_containers.Count + 1 > _maxContainerNumber)
         {
-            //TODO rzuc bledem o braku miejsce
+            throw new ShipOverfillException(_name, _maxContainerNumber);
         }
 
         double totalWeightInKg = 0d;
@@ -35,17 +35,17 @@ public class CargoShip
 
         if (totalWeightInKg + container.getTotalWeight() > _maxWeightInTons * 1000)
         {
-            //TODO rzuc bledem o braku miejsca z uwagi na wage
+            throw new ShipCapacityException(_name, _maxWeightInTons);
         }
 
         _containers.Add(container.getId(), container);
     }
 
-    public void loadContainers(List<Container> containers)
+    public void LoadContainers(List<Container> containers)
     {
         if (_containers.Count + containers.Count > _maxContainerNumber)
         {
-            //TODO rzuc bledem o braku miejsce
+            throw new ShipOverfillException(_name, _maxContainerNumber);
         }
 
         double totalWeightInKg = 0d;
@@ -61,64 +61,72 @@ public class CargoShip
 
         if (totalWeightInKg > _maxWeightInTons * 1000)
         {
-            //TODO rzuc bledem o braku miejsca z uwagi na wage
+            throw new ShipCapacityException(_name, _maxWeightInTons);
         }
 
-        foreach (var con in _containers.Values)
+        foreach (var con in containers)
         {
             _containers.Add(con.getId(), con);
         }
     }
 
-    public void removeContainer(string id)
+    public Container RemoveContainer(string id)
     {
+        Container temp = _containers[id];
         _containers.Remove(id);
+        return temp;
     }
 
-    public void emptyContainer(string id)
+    public void EmptyContainer(string id)
     {
         _containers[id].EmptyCargo();
     }
 
-    public void replaceWithContainer(string id, Container con)
+    public Container ReplaceWithContainer(string swapOut, Container swapIn)
     {
-        _containers.Remove(id);
-        _containers.Add(con.getId(), con);
+        Container con = _containers[swapOut.ToUpper()];
+        _containers.Remove(swapOut.ToUpper());
+        _containers.Remove(swapOut.ToUpper());
+        _containers.Add(con.getId(), swapIn);
+
+        return con;
     }
 
-    public void moveContainer(string id, CargoShip targetCon)
+    public void MoveContainer(string id, CargoShip targetCon)
     {
-        Container containerToMove = _containers[id];
-        _containers.Remove(id);
-        targetCon.loadContainer(containerToMove);
+        Container containerToMove = _containers[id.ToUpper()];
+        targetCon.LoadContainer(containerToMove);
+        _containers.Remove(id.ToUpper());
     }
 
-    public string? containerInfo(string id)
+    public string? ContainerInfo(string id)
     {
         return _containers[id].ToString();
     }
 
-    public List<Container> getContainers()
+    public List<Container> GetContainers()
     {
         return _containers.Values.ToList();
     }
 
-    public string getName()
+    public string GetName()
     {
         return _name;
     }
 
-    public override string? ToString()
+    public override string ToString()
     {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.Append(_name);
         stringBuilder.Append("\t{speed:" + _maxSpeedInKnots + ",");
         stringBuilder.Append(" maxContainer:" + _maxContainerNumber + ",");
         stringBuilder.Append(" maxWeight:" + _maxWeightInTons + "}");
-        if (_containers.Count != 0)
+        foreach (var con in _containers.Values)
         {
-            stringBuilder.Append(_containers);
+            stringBuilder.AppendLine();
+            stringBuilder.Append("\t" + con);
         }
+
 
         return stringBuilder.ToString();
     }

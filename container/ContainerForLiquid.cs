@@ -1,4 +1,6 @@
-﻿namespace ContainerConsoleApp;
+﻿using System.Text;
+
+namespace ContainerConsoleApp;
 
 public class ContainerForLiquid : Container, IHazardNotifier
 {
@@ -12,6 +14,8 @@ public class ContainerForLiquid : Container, IHazardNotifier
     public void Log(string id, string message)
     {
         Console.WriteLine("Container: " + id + " " + message);
+        Console.WriteLine("Enter anything to continue.");
+        Console.ReadKey();
     }
 
     public override void LoadCargo(Cargo cargo)
@@ -29,7 +33,7 @@ public class ContainerForLiquid : Container, IHazardNotifier
 
         if (_isCargoHazardous)
         {
-            if (_containerWeightInKg + cargoLiquid.weight > 0.5 * _maxCargoCapacityInKg)
+            if (_cargoWeightInKg + cargoLiquid.weight > 0.5 * _maxCargoCapacityInKg)
             {
                 Log(_id, "Tried to add hazardous liquid that would exceed 50% capacity rule.");
             }
@@ -40,7 +44,7 @@ public class ContainerForLiquid : Container, IHazardNotifier
         }
         else
         {
-            if (_containerWeightInKg + cargoLiquid.weight > 0.9 * _maxCargoCapacityInKg)
+            if (_cargoWeightInKg + cargoLiquid.weight > 0.9 * _maxCargoCapacityInKg)
             {
                 Log(_id, "Tried to add non hazardous liquid that would exceed 90% capacity rule.");
             }
@@ -49,6 +53,15 @@ public class ContainerForLiquid : Container, IHazardNotifier
                 _cargoWeightInKg += cargoLiquid.weight;
             }
         }
+    }
+
+    public override string ToString()
+    {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.Append(base.ToString().Replace("}", ","));
+        stringBuilder.Append(" is liquid hazardous: " + _isCargoHazardous + "}");
+
+        return stringBuilder.ToString();
     }
 
     protected override string initId(string append = "")
